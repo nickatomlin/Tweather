@@ -1,5 +1,11 @@
+from itertools import islice
 import datetime
 import operator
+import re
+
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))
 
 def weather_desc(tweets):
     notions = {'windy': 0.0,
@@ -28,8 +34,10 @@ def weather_desc(tweets):
              'cloudy': 0.0}
 
     texts = []
+    tweeters = []
 
     for tweet in tweets:
+        counter = 0
         if "windy" in tweet['text'] or "wind" in tweet['text']:
             notions['windy'] += 5.0
 
@@ -88,6 +96,7 @@ def weather_desc(tweets):
 
         if "cold" in tweet['text']:
             temps['cold'] += 5.0
+            counter += 1
 
         if "freezing" in tweet['text']:
             temps['freezing'] += 5.0
@@ -95,6 +104,7 @@ def weather_desc(tweets):
 
         if "clear" in tweet['text']:
             precs['clear'] += 5.0
+            counter += 1
 
         if "overcast" in tweet['text']:
             precs['overcast'] += 5.0
@@ -122,11 +132,16 @@ def weather_desc(tweets):
             precs['raining'] += 2.0
             precs['snowing'] += 1.5
             precs['hailing'] += 1.0
+        try:
+            # What about shift + 0-9 characters and quotes?
+            texts.append([str(tweet['text']), tweet['geo']['coordinates']])
+        except TypeError as e:
+            print(e)
+                
+        
 
-        texts.append(tweet['text'])
-
-    return ((max(notions, key=notions.get), max(temps, key=temps.get), max(precs, key=precs.get)),
-            (texts[0], texts[1], texts[2]))
+    return [[max(notions, key=notions.get), max(temps, key=temps.get), max(precs, key=precs.get)],
+            texts, tweets[:6]]
 
 from TwitterSearch import *
 try:
