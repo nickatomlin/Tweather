@@ -1,2 +1,4 @@
 # Tweather
-Real-time weather reports with the Twitter API.
+A project for HackHarvard 2015. Hosted at http://newflaskv1.azurewebsites.net/tweather via Azure.
+
+Real-time weather visualization with the Twitter API.
